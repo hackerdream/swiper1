@@ -21,6 +21,7 @@
             width: 400px;
             height: 300px;
             margin: 50px auto;
+            overflow: hidden;
         }
 
         #wrap ul {
@@ -161,12 +162,14 @@
                 bPic[index].style.left = 0;
                 bNBtn[index].className = "on";
 
+
+                //左右按钮事件
                 for (var i = 0; i < bTab.length; i++) {
                     bTab[i].onclick = function (e) {
                         if (e && e.target) {
-                            if (e.target.id === "prev") {
-                                tMove.call(this,-1,function(){
-                                    (--index === -1) && (index = len-1);
+                            if (e.target.id === "prev") {   //判断是左边按钮还是右按钮
+                                tMove.call(this, -1, function () {
+                                    (--index === -1) && (index = len - 1);  //修改相应的index
                                 })
 
                             } else {
@@ -179,48 +182,53 @@
                     }
                 }
 
+
+                //下方点击时间
                 for (let i = 0; i < len; i++) {
                     bNBtn[i].i = i;
                     bNBtn[i].onclick = function () {
                         var This = this;
-                        if (this.i < index) { //i 小于 当前的 则往右走
-                            tMove.call(this, 1, function () {
-                                index = This.i;
-                            });
+                        if (this.i !== index) {
+                            if (this.i < index) {   //i 小于 当前的 则往右走
+                                tMove.call(this, -1, function () {
+                                    index = This.i;
+                                });
 
-                        } else {
-                            tMove.call(this, -1, function () {
-                                index = This.i;
-                            });
+                            } else {
+                                tMove.call(this, 1, function () {
+                                    index = This.i;
+                                });
+                            }
                         }
+
                     }
                 }
 
-                function tMove(flag, fn) { //flag = 1的时候往右，-1的时候往左
+                function tMove(flag, fn) {  //flag = 1的时候往左，-1的时候往右
                     var tleft = flag * 400;
-                    bNBtn[index].className = "";
+                    bNBtn[index].className = "";  //注销原下方的按钮的样式
 
-                    if (/btn/i.test(this.className)) {
-                        (flag === 1) ? bPic[((index + 1 )% len)].style.left = tleft + 'px': bPic[index === 0 ? len - 1 :
+                    if (/btn/i.test(this.className)) {   //判断是下方按钮，还是左右按钮，进行相应的下一个操作的图片的放置
+                        (flag === 1) ? bPic[((index + 1) % len)].style.left = tleft + 'px': bPic[index === 0 ? len - 1 :
                             index - 1].style.left = tleft + 'px';
 
                     } else {
 
-                        bPic[this.i].style.left = -tleft + "px";
+                        bPic[this.i].style.left = tleft + "px";
 
                     }
 
-                    move(bPic[index], {
-                            left: -tleft
-                        }, 500);
+                    move(bPic[index], {  //移动现有图片
+                        left: -tleft
+                    }, 500);
 
-                        fn()
+                    fn()        //修改index
 
-                        bNBtn[index].className = "on";
+                    bNBtn[index].className = "on";  //給现在的相应index的下方按钮加上样式
 
-                        move(bPic[index], {
-                            left: 0
-                        }, 500);
+                    move(bPic[index], {     //移动index的下标的图片进来
+                        left: 0
+                    }, 500);
 
 
 

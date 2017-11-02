@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>三图无缝轮播</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #wrap {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            margin: 50px auto;
+        }
+
+        #wrap ul {
+            width: 100%;
+            height: 100%;
+        }
+
+        #wrap ul li {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            line-height: 300px;
+            text-align: center;
+            font-size: 100px;
+        }
+
+        #wrap ul li:nth-child(1) {
+            left: 400px;
+            background: #ccc;
+        }
+
+        #wrap ul li:nth-child(2) {
+            left: 400px;
+            background: yellow;
+        }
+
+        #wrap ul li:nth-child(3) {
+            left: 400px;
+            background: olivedrab;
+        }
+
+        #wrap ul li:nth-child(4) {
+            left: 400px;
+            background: blueviolet;
+        }
+
+        #wrap ul li:nth-child(5) {
+            left: 400px;
+            background: orangered;
+        }
+
+        #wrap .btn {
+            position: absolute;
+            top: 50%;
+            transform: translate(0, -50%);
+            display: inline-block;
+            width: 40px;
+            height: 30px;
+            background: rgba(0, 0, 0, .6);
+            line-height: 25px;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #prev {
+            left: 0;
+        }
+
+        #next {
+            right: 0;
+        }
+
+        #tab {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            transform: translate(-50%, 0);
+            padding: 5px 5px 5px 0;
+            background: rgba(0, 0, 0, .6);
+            border-radius: 40px;
+        }
+
+        #tab span {
+            float: left;
+            margin-left: 5px;
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #tab .on {
+            background: #F60;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="wrap">
+        <ul id="wrap-box">
+            <li>
+                <P>一</P>
+            </li>
+            <li>
+                <P>二</P>
+            </li>
+            <li>
+                <P>三</P>
+            </li>
+            <li>
+                <P>四</P>
+            </li>
+            <li>
+                <P>五</P>
+            </li>
+        </ul>
+        <div id="prev" class="btn">&lt;</div>
+        <div id="next" class="btn">&gt;</div>
+        <div id="tab">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+        </div>
+    </div>
+
+    <script src="swiper-move.js"></script>
+    <script type="text/javascript">
+        (
+            function () {
+                var wrap = document.getElementById("wrap"),
+                    bPic = document.querySelectorAll("#wrap-box li"),
+                    bNBtn = wrap.querySelectorAll("#tab span"),
+                    bTab = wrap.getElementsByClassName("btn"),
+                    index = 0,
+                    len = bPic.length;
+
+                //初始化
+
+                bPic[index].style.left = 0;
+                bNBtn[index].className = "on";
+
+                for (var i = 0; i < bTab.length; i++) {
+                    bTab[i].onclick = function (e) {
+                        if (e && e.target) {
+                            if (e.target.id === "prev") {
+                                tMove.call(this,-1,function(){
+                                    (--index === -1) && (index = len-1);
+                                })
+
+                            } else {
+                                tMove.call(this, 1, function () {
+                                    index = (index + 1) % len;
+                                })
+                            }
+                        }
+
+                    }
+                }
+
+                for (let i = 0; i < len; i++) {
+                    bNBtn[i].i = i;
+                    bNBtn[i].onclick = function () {
+                        var This = this;
+                        if (this.i < index) { //i 小于 当前的 则往右走
+                            tMove.call(this, 1, function () {
+                                index = This.i;
+                            });
+
+                        } else {
+                            tMove.call(this, -1, function () {
+                                index = This.i;
+                            });
+                        }
+                    }
+                }
+
+                function tMove(flag, fn) { //flag = 1的时候往右，-1的时候往左
+                    var tleft = flag * 400;
+                    bNBtn[index].className = "";
+
+                    if (/btn/i.test(this.className)) {
+                        (flag === 1) ? bPic[((index + 1 )% len)].style.left = tleft + 'px': bPic[index === 0 ? len - 1 :
+                            index - 1].style.left = tleft + 'px';
+
+                    } else {
+
+                        bPic[this.i].style.left = -tleft + "px";
+
+                    }
+
+                    move(bPic[index], {
+                            left: -tleft
+                        }, 500);
+
+                        fn()
+
+                        bNBtn[index].className = "on";
+
+                        move(bPic[index], {
+                            left: 0
+                        }, 500);
+
+
+
+                }
+            }
+        )()
+    </script>
+
+</body>
+
+</html>
